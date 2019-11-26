@@ -1,0 +1,66 @@
+apiVersion: apps/v1beta2
+kind: DaemonSet
+metadata:
+  name: ossec-hids
+  namespace: ossec
+spec:
+  selector:
+    matchLabels:
+      app: ossec-hids
+  template:
+    metadata:
+      labels:
+        app: ossec-hids
+      name: ossec-hids
+    spec:
+      #hostNetwork: true
+      volumes:
+        - name: host-etc
+          hostPath:
+            # directory location on host
+            path: /etc
+            # this field is optional
+            type: Directory
+        - name: host-bin
+          hostPath:
+            # directory location on host
+            path: /bin
+            # this field is optional
+            type: Directory
+        - name: host-var-log
+          hostPath:
+            # directory location on host
+            path: /var/log
+            # this field is optional
+        - name: host-docker-logs
+          hostPath:
+            # directory location on host
+            path: /var/log/pods
+            # this field is optional
+        - name: docker-logs
+          hostPath:
+            # directory location on host
+            path: /var/lib/docker/containers
+            # this field is optional
+      containers:
+        - name: ossec-hids
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          resources:
+            requests:
+              cpu: 200m
+            limits:
+              cpu: 300m
+          volumeMounts:
+            - name: host-etc
+              mountPath: /hostfs/etc
+            - name: host-bin
+              mountPath: /hostfs/bin
+            - name: host-var-log
+              mountPath: /hostfs/log
+            - name: host-docker-logs
+              mountPath: /var/log/pods
+            - name: docker-logs
+              mountPath: /var/lib/docker/containers
+
+
+
