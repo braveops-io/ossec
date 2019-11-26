@@ -1,0 +1,7 @@
+version: '2'
+services:
+  ossec:  
+    build: .
+    image: mattiashem/ossec
+    volumes:
+      - .:/code
